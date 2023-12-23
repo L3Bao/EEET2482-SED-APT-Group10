@@ -135,46 +135,67 @@ void Service::CreateService() {
 
 void Service::ViewService() {
     std::string inputID;
-    std::cout << "Enter the Service ID you want to view (e.g., s-1): ";
-    std::cin >> inputID;  // Get the desired Service ID from the user
+    bool validInput = false;
 
-    std::string filename = "service.txt";  // The file where services are stored
-    std::ifstream file(filename);
-    std::string line;
+    while (!validInput) {
+        std::cout << "Enter the Service ID you want to view (e.g., s-1), or type 'exit' to stop: ";
+        std::cin >> inputID;
 
-    if (file.is_open()) {
+        // Allow the user to exit the loop
+        if (inputID == "exit") {
+            break;
+        }
+
+        // Input validation
+        if (inputID.empty() || inputID.find("s-") == std::string::npos) {
+            std::cout << "Invalid input. Please enter a valid Service ID (e.g., s-1).\n";
+            continue;  // Skip the rest of the loop and prompt again
+        }
+
+        std::string filename = "service.txt";
+        std::ifstream file(filename);
+        std::string line;
+
+        // File open error
+        if (!file.is_open()) {
+            std::cerr << "Unable to open file " << filename << ". Please check if the file exists and you have the necessary permissions.\n";
+            continue;  // Skip the rest of the loop and prompt again
+        }
+
         bool serviceFound = false;
         while (getline(file, line)) {
             std::stringstream linestream(line);
             std::string currentID, currentType, currentSkills, currentCost, currentDuration;
 
-            // Parse the line into separate fields based on the CSV format
             getline(linestream, currentID, ',');
             getline(linestream, currentType, ',');
             getline(linestream, currentSkills, ',');
             getline(linestream, currentCost, ',');
             getline(linestream, currentDuration);
 
-            // Check if the current line's service ID matches the user's input
+            // Format error
+            if (linestream.fail() || currentID.empty()) {
+                std::cerr << "There was a problem reading the file. Please check the file format.\n";
+                break;
+            }
+
             if (currentID == inputID) {
-                // Display the service details
                 std::cout << "Service ID: " << currentID << '\n';
                 std::cout << "Service type: " << currentType << '\n';
                 std::cout << "Required skills: " << currentSkills << '\n';
                 std::cout << "Credit cost: " << currentCost << '\n';
                 std::cout << "Duration: " << currentDuration << '\n';
                 serviceFound = true;
+                validInput = true;  // Indicate that a valid input was provided
                 break;  // Stop searching as the service has been found
             }
         }
 
-        if (!serviceFound) {
-            std::cout << "Service with ID " << inputID << " not found.\n";
-        }
-
         file.close();
-    } else {
-        std::cerr << "Unable to open file " << filename << "\n";
+
+        if (!serviceFound && validInput) {
+            std::cout << "Service with ID " << inputID << " not found. Please try again.\n";
+        }
     }
 }
 
