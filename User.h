@@ -15,8 +15,8 @@ public:
     User();
     static std::string generateUserId();
     std::vector<std::string> split(const std::string &s, char delimiter);
-    bool login(std::string username, std::string pass);
-    void saveUser();
+    virtual bool login(std::string username, std::string pass);
+    virtual void saveUser();
     void createNewUser(std::string name, std::string password, std::string contact, std::string address);
     void updateUser(std::string newName = "", std::string newPassword = "", std::string newContact = "", std::string newAddress = "");
     void deleteSpecificUser(const std::string &delUserId);

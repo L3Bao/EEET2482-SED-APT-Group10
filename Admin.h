@@ -2,18 +2,19 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "User.h"  // Including the User class
+#include "User.h"
+#include <string>
 
-class Admin : public User {  // Inheriting from User
+class Admin : public User {
 public:
-    // Using the User class's constructor
-    using User::User;
+    Admin();
 
-    // Function to verify if the user is an admin, always returns true for Admin instances
+    bool login(std::string username, std::string pass) override;
+    void resetUserPassword(const std::string &userId, const std::string &newPassword);
     bool isAdmin() const;
 
-    // Function to reset a user's password
-    void resetPassword(const std::string& userId, const std::string& newPassword);
+    // Override the saveUser method to save to admins.txt.
+    void saveUser() override;
 };
 
-#endif // ADMIN_H
+#endif // ADMIN_H   
