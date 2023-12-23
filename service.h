@@ -28,6 +28,7 @@ public:
 
     static std::string GenerateServiceId();
     friend void InitializeServiceCount();
+    friend void UpdateLine();
 };
 
 #endif

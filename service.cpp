@@ -9,6 +9,31 @@
 using std::cin, std::cout;
 int Service::serviceCount = 0;
 
+void UpdateLine(std::string& line, int fieldIndex, const std::string& newValue) {
+    std::stringstream linestream(line);
+    std::string segment;
+    std::vector<std::string> segments;
+
+    // Split the line into segments
+    while (getline(linestream, segment, ',')) {
+        segments.push_back(segment);
+    }
+
+    // Update the specified field
+    if (fieldIndex < segments.size()) {
+        segments[fieldIndex] = newValue;
+    }
+
+    // Reconstruct the line
+    std::ostringstream newLine;
+    for (size_t i = 0; i < segments.size(); ++i) {
+        newLine << segments[i];
+        if (i < segments.size() - 1) newLine << ",";
+    }
+    line = newLine.str();
+}
+
+
 void InitializeServiceCount() {
     std::string filename = "service.txt";
     std::ifstream file(filename);
@@ -200,19 +225,94 @@ void Service::ViewService() {
 }
 
 void Service::UpdateService() {
-    std::cout << "Enter service ID: ";
-    std::cin >> serviceID;
-    std::cout << "Enter service type: ";
-    std::cin >> serviceType;
-    std::cout << "Enter required skills (separated by spaces): ";
-    std::string skill;
-    while (std::cin >> skill) {
-        requiredSkills.push_back(skill);
+    std::cout << "Enter the Service ID you want to update (e.g., s-1): ";
+    std::cin >> serviceID;  // Get the Service ID to update
+
+    std::cout << "What would you like to update?\n";
+    std::cout << "1. Service Type\n";
+    std::cout << "2. Required Skills\n";
+    std::cout << "3. Credit Cost\n";
+    std::cout << "4. Duration\n";
+    std::cout << "Enter your choice (1-4): ";
+
+    int choice;
+    std::cin >> choice;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::string filename = "service.txt";
+    std::ifstream file(filename);
+    std::vector<std::string> lines;
+    std::string line;
+    bool serviceFound = false;
+
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            std::stringstream linestream(line);
+            std::string currentID;
+            getline(linestream, currentID, ',');
+
+            if (currentID == serviceID) {
+                serviceFound = true;
+
+                // Depending on the user's choice, update different attributes
+                switch (choice) {
+                    case 1: {
+                        std::cout << "Enter new service type: ";
+                        std::getline(std::cin, serviceType);
+                        UpdateLine(line, 1, serviceType);  // Update the service type in the line
+                        break;
+                    }
+                    case 2: {
+                        std::cout << "Enter required skills (separated by semicolons): ";
+                        std::string skills;
+                        std::getline(std::cin, skills);
+                        UpdateLine(line, 2, skills);  // Update the required skills in the line
+                        break;
+                    }
+                    case 3: {
+                        std::cout << "Enter new credit cost: ";
+                        std::string cost;
+                        std::getline(std::cin, cost);
+                        UpdateLine(line, 3, cost);  // Update the credit cost in the line
+                        break;
+                    }
+                    case 4: {
+                        std::cout << "Enter new duration: ";
+                        std::string duration;
+                        std::getline(std::cin, duration);
+                        UpdateLine(line, 4, duration);  // Update the duration in the line
+                        break;
+                    }
+                    default:
+                        std::cout << "Invalid choice.\n";
+                        return;
+                }
+            }
+            lines.push_back(line);  // Store the line for later rewriting
+        }
+        file.close();
+    } else {
+        std::cerr << "Unable to open file " << filename << "\n";
+        return;
     }
-    std::cout << "Enter credit cost: ";
-    std::cin >> creditCost;
-    std::cout << "Enter duration: ";
-    std::cin >> duration;
+    if (serviceFound) {
+        std::ofstream outFile(filename);
+        if (outFile.is_open()) {
+            for (size_t i = 0; i < lines.size(); ++i) {
+                outFile << lines[i];
+                // Write a newline if this isn't the last line
+                if (i < lines.size() - 1) {
+                outFile << '\n';
+                }
+            }
+            outFile.close();
+            std::cout << "Service updated successfully.\n";
+        } else {
+            std::cerr << "Unable to open file " << filename << " for writing.\n";
+        }
+    } else {
+        std::cout << "Service with ID " << serviceID << " not found.\n";
+    }
 }
 
 void Service::DeleteService() {
@@ -228,7 +328,7 @@ int main() {
     InitializeServiceCount();
 
     Service service;
-    service.ViewService();
+    service.UpdateService();
 
     return 0;
 }
