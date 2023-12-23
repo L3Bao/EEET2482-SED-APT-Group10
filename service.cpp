@@ -316,19 +316,62 @@ void Service::UpdateService() {
 }
 
 void Service::DeleteService() {
-    serviceID = "";
-    serviceType = "";
-    requiredSkills.clear();
-    creditCost = 0.0;
-    duration = "";
-    offeringMember = nullptr;
+    std::string inputID;
+    std::cout << "Enter the Service ID you want to delete (e.g., s-1): ";
+    std::cin >> inputID;
+
+    std::string filename = "service.txt";
+    std::ifstream file(filename);
+    std::vector<std::string> lines;
+    std::string line;
+    bool serviceFound = false;
+
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            std::stringstream linestream(line);
+            std::string currentID;
+            getline(linestream, currentID, ',');
+
+            if (currentID != inputID) {
+                // If the current line's ID doesn't match the input ID, keep it
+                lines.push_back(line);
+            } else {
+                // Mark that we found and will delete the service
+                serviceFound = true;
+            }
+        }
+        file.close();  // Close the file after reading all lines
+
+        if (serviceFound) {
+            // Open the same file in write mode (this will overwrite the existing file)
+            std::ofstream outFile(filename);
+            if (outFile.is_open()) {
+                for (size_t i = 0; i < lines.size(); ++i) {
+                    outFile << lines[i];
+                    // Write a newline if this isn't the last line
+                    if (i < lines.size() - 1) {
+                        outFile << '\n';
+                    }
+                }
+                outFile.close();
+                std::cout << "Service with ID " << inputID << " has been deleted successfully.\n";
+            } else {
+                std::cerr << "Unable to open file " << filename << " for writing.\n";
+            }
+        } else {
+            std::cout << "Service with ID " << inputID << " not found.\n";
+        }
+    } else {
+        std::cerr << "Unable to open file " << filename << "\n";
+    }
 }
+
 
 int main() {
     InitializeServiceCount();
 
     Service service;
-    service.UpdateService();
+    service.DeleteService();
 
     return 0;
 }

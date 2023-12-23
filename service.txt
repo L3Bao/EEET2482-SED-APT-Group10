@@ -1,3 +1,2 @@
 Service ID,Service Type,Required Skills,Credit Cost,Duration
 s-1,Help People,Gardening;Tutor,50,1.5
-s-2,Day Work,Pet Sitting;Pet Walking,35,2
