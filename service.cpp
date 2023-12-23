@@ -75,6 +75,8 @@ void Service::CreateService() {
             } else {
                 std::cout << "No skills to remove. Continue entering skills: ";
             }
+        } else if (skill.empty()) {
+            std::cout << "Skill cannot be empty. Please enter a valid skill: ";
         }
         // Add the skill to the list
         else {
