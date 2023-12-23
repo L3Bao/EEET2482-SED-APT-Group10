@@ -134,15 +134,48 @@ void Service::CreateService() {
 }
 
 void Service::ViewService() {
-    std::cout << "Service ID: " << serviceID << '\n';
-    std::cout << "Service type: " << serviceType << '\n';
-    std::cout << "Required skills: ";
-    for (const auto& skill : requiredSkills) {
-        std::cout << skill << ' ';
+    std::string inputID;
+    std::cout << "Enter the Service ID you want to view (e.g., s-1): ";
+    std::cin >> inputID;  // Get the desired Service ID from the user
+
+    std::string filename = "service.txt";  // The file where services are stored
+    std::ifstream file(filename);
+    std::string line;
+
+    if (file.is_open()) {
+        bool serviceFound = false;
+        while (getline(file, line)) {
+            std::stringstream linestream(line);
+            std::string currentID, currentType, currentSkills, currentCost, currentDuration;
+
+            // Parse the line into separate fields based on the CSV format
+            getline(linestream, currentID, ',');
+            getline(linestream, currentType, ',');
+            getline(linestream, currentSkills, ',');
+            getline(linestream, currentCost, ',');
+            getline(linestream, currentDuration);
+
+            // Check if the current line's service ID matches the user's input
+            if (currentID == inputID) {
+                // Display the service details
+                std::cout << "Service ID: " << currentID << '\n';
+                std::cout << "Service type: " << currentType << '\n';
+                std::cout << "Required skills: " << currentSkills << '\n';
+                std::cout << "Credit cost: " << currentCost << '\n';
+                std::cout << "Duration: " << currentDuration << '\n';
+                serviceFound = true;
+                break;  // Stop searching as the service has been found
+            }
+        }
+
+        if (!serviceFound) {
+            std::cout << "Service with ID " << inputID << " not found.\n";
+        }
+
+        file.close();
+    } else {
+        std::cerr << "Unable to open file " << filename << "\n";
     }
-    std::cout << '\n';
-    std::cout << "Credit cost: " << creditCost << '\n';
-    std::cout << "Duration: " << duration << '\n';
 }
 
 void Service::UpdateService() {
@@ -174,7 +207,7 @@ int main() {
     InitializeServiceCount();
 
     Service service;
-    service.CreateService();
+    service.ViewService();
 
     return 0;
 }
