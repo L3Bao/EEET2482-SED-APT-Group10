@@ -16,18 +16,20 @@ private:
     Member* offeringMember;
 
     static int serviceCount;
+    static bool initialized;
+
+    static bool InitializeServiceCount();
 public:
-    Service(const std::string& type = "", const std::vector<std::string>& skills = {}, double cost = 0.0, const std::string& time = "1h", Member* member = nullptr);
+    Service(const std::string& id = "", const std::string& type = "", const std::vector<std::string>& skills = {}, double cost = 0.0, const std::string& time = "1h", Member* member = nullptr);
 
     ~Service();
 
-    void CreateService();
-    void ViewService();
-    void UpdateService();
+    void CreateService(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time);
+    void ViewService(const std::string& id);
+    void UpdateService(const std::string& id, int choice, const std::string& newValue);
     void DeleteService();
 
     static std::string GenerateServiceId();
-    friend void InitializeServiceCount();
     friend void UpdateLine();
 };
 

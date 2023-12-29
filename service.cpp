@@ -8,6 +8,7 @@
 
 using std::cin, std::cout;
 int Service::serviceCount = 0;
+bool Service::initialized = Service::InitializeServiceCount();
 
 void UpdateLine(std::string& line, int fieldIndex, const std::string& newValue) {
     std::stringstream linestream(line);
@@ -34,7 +35,7 @@ void UpdateLine(std::string& line, int fieldIndex, const std::string& newValue) 
 }
 
 
-void InitializeServiceCount() {
+bool Service::InitializeServiceCount() {
     std::string filename = "service.txt";
     std::ifstream file(filename);
     std::string line;
@@ -55,10 +56,11 @@ void InitializeServiceCount() {
         Service::serviceCount = maxId; // Set the static counter to the highest found ID
         file.close();
     }
+    return true;
 }
 
-Service::Service(const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time, Member* member) {
-    serviceID = Service::GenerateServiceId();
+Service::Service(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time, Member* member) {
+    serviceID = id;
     serviceType = type;
     requiredSkills = skills;
     creditCost = cost;
@@ -72,50 +74,13 @@ std::string Service::GenerateServiceId() {
     return "s-" + std::to_string(++serviceCount);
 }
 
-void Service::CreateService() {
-    std::cout << "Service ID generated: " << serviceID << '\n';
-    // Clear input buffer before taking multiple words
-    std::cout << "Enter service type: ";
-    std::getline(std::cin, serviceType);
+void Service::CreateService(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time) {
+    serviceID = id;
+    serviceType = type;
+    requiredSkills = skills;
+    creditCost = cost;
+    duration = time;
 
-    std::cout << "Enter required skills (type '-1' to finish, '-2' to remove the last skill): ";
-    std::string skill;
-
-    while (true) {
-        std::getline(std::cin, skill);
-
-        // Check for the sentinel value to end the loop
-        if (skill == "-1") {
-            if (requiredSkills.empty()) {
-                std::cout << "You must enter at least one skill. Please continue entering skills: ";
-            } else {
-                break; // Exit the loop if the user types '-1'
-            }
-        }
-        // Allow the user to delete the last entered skill
-        else if (skill == "-2") {
-            if (!requiredSkills.empty()) {
-                requiredSkills.pop_back();
-                std::cout << "Last skill removed. Continue entering skills: ";
-            } else {
-                std::cout << "No skills to remove. Continue entering skills: ";
-            }
-        } else if (skill.empty()) {
-            std::cout << "Skill cannot be empty. Please enter a valid skill: ";
-        }
-        // Add the skill to the list
-        else {
-            requiredSkills.push_back(skill);
-            std::cout << "Skill added. Continue entering skills: ";
-        }
-    }
-
-    std::cout << "Enter credit cost: ";
-    std::cin >> creditCost;
-    std::cout << "Enter duration: ";
-    std::cin >> duration;
-
-    // Define the file name
     std::string filename = "service.txt";
 
     // Check if the file already exists
@@ -158,36 +123,17 @@ void Service::CreateService() {
     }
 }
 
-void Service::ViewService() {
-    std::string inputID;
-    bool validInput = false;
+void Service::ViewService(const std::string& id) {
+    std::string filename = "service.txt";
+    std::ifstream file(filename);
+    std::string line;
+    bool serviceFound = false;
 
-    while (!validInput) {
-        std::cout << "Enter the Service ID you want to view (e.g., s-1), or type 'exit' to stop: ";
-        std::cin >> inputID;
 
-        // Allow the user to exit the loop
-        if (inputID == "exit") {
-            break;
-        }
-
-        // Input validation
-        if (inputID.empty() || inputID.find("s-") == std::string::npos) {
-            std::cout << "Invalid input. Please enter a valid Service ID (e.g., s-1).\n";
-            continue;  // Skip the rest of the loop and prompt again
-        }
-
-        std::string filename = "service.txt";
-        std::ifstream file(filename);
-        std::string line;
-
-        // File open error
-        if (!file.is_open()) {
-            std::cerr << "Unable to open file " << filename << ". Please check if the file exists and you have the necessary permissions.\n";
-            continue;  // Skip the rest of the loop and prompt again
-        }
-
-        bool serviceFound = false;
+    // File open error
+    if (!file.is_open()) {
+        std::cerr << "Unable to open file " << filename << ". Please check if the file exists and you have the necessary permissions.\n";
+    } else {
         while (getline(file, line)) {
             std::stringstream linestream(line);
             std::string currentID, currentType, currentSkills, currentCost, currentDuration;
@@ -204,41 +150,27 @@ void Service::ViewService() {
                 break;
             }
 
-            if (currentID == inputID) {
+            if (currentID == id) {
                 std::cout << "Service ID: " << currentID << '\n';
                 std::cout << "Service type: " << currentType << '\n';
                 std::cout << "Required skills: " << currentSkills << '\n';
                 std::cout << "Credit cost: " << currentCost << '\n';
-                std::cout << "Duration: " << currentDuration << '\n';
+                std::cout << "Duration: " << currentDuration << "h" << '\n';
                 serviceFound = true;
-                validInput = true;  // Indicate that a valid input was provided
                 break;  // Stop searching as the service has been found
             }
         }
 
         file.close();
 
-        if (!serviceFound && validInput) {
-            std::cout << "Service with ID " << inputID << " not found. Please try again.\n";
+        if (!serviceFound) {
+            std::cout << "Service with ID " << id << " not found. Please try again.\n";
         }
     }
+    
 }
 
-void Service::UpdateService() {
-    std::cout << "Enter the Service ID you want to update (e.g., s-1): ";
-    std::cin >> serviceID;  // Get the Service ID to update
-
-    std::cout << "What would you like to update?\n";
-    std::cout << "1. Service Type\n";
-    std::cout << "2. Required Skills\n";
-    std::cout << "3. Credit Cost\n";
-    std::cout << "4. Duration\n";
-    std::cout << "Enter your choice (1-4): ";
-
-    int choice;
-    std::cin >> choice;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+void Service::UpdateService(const std::string& id, int choice, const std::string& newValue) {
     std::string filename = "service.txt";
     std::ifstream file(filename);
     std::vector<std::string> lines;
@@ -251,42 +183,10 @@ void Service::UpdateService() {
             std::string currentID;
             getline(linestream, currentID, ',');
 
-            if (currentID == serviceID) {
+            if (currentID == id) {
                 serviceFound = true;
-
-                // Depending on the user's choice, update different attributes
-                switch (choice) {
-                    case 1: {
-                        std::cout << "Enter new service type: ";
-                        std::getline(std::cin, serviceType);
-                        UpdateLine(line, 1, serviceType);  // Update the service type in the line
-                        break;
-                    }
-                    case 2: {
-                        std::cout << "Enter required skills (separated by semicolons): ";
-                        std::string skills;
-                        std::getline(std::cin, skills);
-                        UpdateLine(line, 2, skills);  // Update the required skills in the line
-                        break;
-                    }
-                    case 3: {
-                        std::cout << "Enter new credit cost: ";
-                        std::string cost;
-                        std::getline(std::cin, cost);
-                        UpdateLine(line, 3, cost);  // Update the credit cost in the line
-                        break;
-                    }
-                    case 4: {
-                        std::cout << "Enter new duration: ";
-                        std::string duration;
-                        std::getline(std::cin, duration);
-                        UpdateLine(line, 4, duration);  // Update the duration in the line
-                        break;
-                    }
-                    default:
-                        std::cout << "Invalid choice.\n";
-                        return;
-                }
+                // Update the line based on the choice
+                UpdateLine(line, choice, newValue);
             }
             lines.push_back(line);  // Store the line for later rewriting
         }
@@ -295,14 +195,15 @@ void Service::UpdateService() {
         std::cerr << "Unable to open file " << filename << "\n";
         return;
     }
+
+    // Rewrite the file with updated content
     if (serviceFound) {
         std::ofstream outFile(filename);
         if (outFile.is_open()) {
             for (size_t i = 0; i < lines.size(); ++i) {
                 outFile << lines[i];
-                // Write a newline if this isn't the last line
                 if (i < lines.size() - 1) {
-                outFile << '\n';
+                    outFile << '\n';  // Write a newline if this isn't the last line
                 }
             }
             outFile.close();
@@ -311,9 +212,10 @@ void Service::UpdateService() {
             std::cerr << "Unable to open file " << filename << " for writing.\n";
         }
     } else {
-        std::cout << "Service with ID " << serviceID << " not found.\n";
+        std::cout << "Service with ID " << id << " not found.\n";
     }
 }
+
 
 void Service::DeleteService() {
     std::string inputID;
@@ -368,10 +270,166 @@ void Service::DeleteService() {
 
 
 int main() {
-    InitializeServiceCount();
+    Service service;  // Assuming default constructor is appropriate
+    int choice = 0;
 
-    Service service;
-    service.DeleteService();
+    while (true) {
+        std::cout << "\nService Management System\n";
+        std::cout << "1. Create Service\n";
+        std::cout << "2. View Service\n";
+        std::cout << "3. Update Service\n";
+        std::cout << "4. Delete Service\n";
+        std::cout << "5. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        // Clear the input buffer to handle any extraneous input
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (choice) {
+            case 1: {
+                std::string id = Service::GenerateServiceId();
+                std::string type, skill, time;
+                double cost;
+                std::vector<std::string> skills;
+
+                std::cout << "Service ID generated: " << id << '\n';
+                std::cout << "Enter service type: ";
+                std::getline(std::cin, type);
+
+                std::cout << "Enter required skills (type '-1' to finish, '-2' to remove the last skill): ";
+
+                while (true) {
+                    std::getline(std::cin, skill);
+
+                    // Check for the sentinel value to end the loop
+                    if (skill == "-1") {
+                        if (skills.empty()) {
+                            std::cout << "You must enter at least one skill. Please continue entering skills: ";
+                        } else {
+                            break; // Exit the loop if the user types '-1'
+                        }
+                    }
+                    // Allow the user to delete the last entered skill
+                    else if (skill == "-2") {
+                        if (!skills.empty()) {
+                            skills.pop_back();
+                            std::cout << "Last skill removed. Continue entering skills: ";
+                        } else {
+                            std::cout << "No skills to remove. Continue entering skills: ";
+                        }
+                    } else if (skill.empty()) {
+                        std::cout << "Skill cannot be empty. Please enter a valid skill: ";
+                    }
+                    // Add the skill to the list
+                    else {
+                        skills.push_back(skill);
+                        std::cout << "Skill added. Continue entering skills: ";
+                    }
+                }
+
+                std::cout << "Enter credit cost: ";
+                std::cin >> cost;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Enter duration: ";
+                std::getline(std::cin, time);
+
+                service.CreateService(id, type, skills, cost, time);
+                break;
+            }
+            case 2: {
+                std::string inputID;
+                std::cout << "Enter the Service ID you want to view (e.g., s-1): ";
+                std::cin >> inputID;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Clear the input buffer
+
+                // Input validation
+                if (inputID.empty() || inputID.find("s-") == std::string::npos) {
+                    std::cout << "Invalid input. Please enter a valid Service ID (e.g., s-1).\n";
+                } else {
+                    service.ViewService(inputID);
+                }
+                break;
+            }
+            case 3: {
+                std::string serviceID;
+                std::cout << "Enter the Service ID you want to update (e.g., s-1): ";
+                std::cin >> serviceID;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                int choice;
+                std::string newValue;
+                bool isValidInput = false;  // Flag to track if the input is valid
+
+                std::cout << "What would you like to update?\n";
+                std::cout << "1. Service Type\n";
+                std::cout << "2. Required Skills\n";
+                std::cout << "3. Credit Cost\n";
+                std::cout << "4. Duration\n";
+                std::cout << "Enter your choice (1-4): ";
+                std::cin >> choice;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                while (!isValidInput) {
+                    if (choice == 1) {
+                        std::cout << "Enter new service type: ";
+                        std::getline(std::cin, newValue);
+                        isValidInput = !newValue.empty();  // Validate that input is not empty
+                    } else if (choice == 2) {
+                        std::cout << "Enter required skills (separated by semicolons): ";
+                        std::getline(std::cin, newValue);
+                        // Validate that input is not empty and correctly formatted
+                        isValidInput = !newValue.empty() && newValue.find_first_not_of(" ;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == std::string::npos;
+                    } else if (choice == 3) {
+                        std::cout << "Enter new credit cost: ";
+                        std::getline(std::cin, newValue);
+                        // Validate that the cost is a number and is positive
+                        try {
+                            double cost = std::stod(newValue);
+                            isValidInput = cost > 0;
+                        } catch (const std::exception& e) {
+                            isValidInput = false;
+                        }
+                    } else if (choice == 4) {
+                        std::cout << "Enter new duration (in hours, e.g., 1.5 for one and a half hours): ";
+                        std::getline(std::cin, newValue);
+                        // Validate that the duration is a number and is positive
+                        try {
+                            double duration = std::stod(newValue);
+                            isValidInput = duration > 0;
+                        } catch (const std::exception& e) {
+                            isValidInput = false;
+                        }
+                    } else {
+                        std::cout << "Invalid choice.\n";
+                        break;
+                    }
+
+                    if (!isValidInput) {
+                        std::cout << "Invalid input. Please try again.\n";
+                    }
+                }
+
+                if (isValidInput) {
+                    service.UpdateService(serviceID, choice, newValue);
+                }
+                break;
+            }
+  
+            case 4:
+                service.DeleteService();
+                break;
+            case 5:
+                std::cout << "Exiting the Service Management System.\n";
+                return 0;  // Exit the program
+            default:
+                std::cout << "Invalid choice, please try again.\n";
+        }
+
+        // Pause and wait for user acknowledgment before returning to the main menu
+        std::cout << "\nPress Enter to return to the main menu...";
+        std::cin.get();  // Wait for user to press Enter
+    }
 
     return 0;
 }
