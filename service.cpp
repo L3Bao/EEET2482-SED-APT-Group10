@@ -290,24 +290,30 @@ int main() {
                 std::vector<std::string> skills;
 
                 std::cout << "Service ID generated: " << id << '\n';
-                std::cout << "Enter service type: ";
-                std::getline(std::cin, type);
 
+                // Input for Service Type
+                while (true) {
+                    std::cout << "Enter service type: ";
+                    std::getline(std::cin, type);
+                    if (type.empty()) {
+                        std::cout << "Service type cannot be empty. Please enter a valid service type.\n";
+                    } else {
+                        break;  // Valid input; break out of the loop.
+                    }
+                }
+
+                // Input for Skills
                 std::cout << "Enter required skills (type '-1' to finish, '-2' to remove the last skill): ";
-
                 while (true) {
                     std::getline(std::cin, skill);
 
-                    // Check for the sentinel value to end the loop
                     if (skill == "-1") {
                         if (skills.empty()) {
                             std::cout << "You must enter at least one skill. Please continue entering skills: ";
                         } else {
-                            break; // Exit the loop if the user types '-1'
+                            break;  // Exit the loop if the user types '-1'
                         }
-                    }
-                    // Allow the user to delete the last entered skill
-                    else if (skill == "-2") {
+                    } else if (skill == "-2") {
                         if (!skills.empty()) {
                             skills.pop_back();
                             std::cout << "Last skill removed. Continue entering skills: ";
@@ -316,23 +322,49 @@ int main() {
                         }
                     } else if (skill.empty()) {
                         std::cout << "Skill cannot be empty. Please enter a valid skill: ";
-                    }
-                    // Add the skill to the list
-                    else {
+                    } else {
                         skills.push_back(skill);
                         std::cout << "Skill added. Continue entering skills: ";
                     }
                 }
 
-                std::cout << "Enter credit cost: ";
-                std::cin >> cost;
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Enter duration: ";
-                std::getline(std::cin, time);
+                // Input for Credit Cost
+                while (true) {
+                    std::cout << "Enter credit cost: ";
+                    std::string costInput;
+                    std::getline(std::cin, costInput);
+                    try {
+                        cost = std::stod(costInput);
+                        if (cost <= 0) {
+                            throw std::invalid_argument("Cost must be positive.");
+                        }
+                        break;  // Valid input; break out of the loop.
+                    } catch (const std::exception& e) {
+                        std::cout << "Invalid cost format. Please enter a valid number (e.g., 50.5).\n";
+                    }
+                }
+
+                // Input for Duration
+                while (true) {
+                    std::cout << "Enter duration (in hours, e.g., 1.5 for one and a half hours): ";
+                    std::string durationInput;
+                    std::getline(std::cin, durationInput);
+                    try {
+                        double durationVal = std::stod(durationInput);
+                        if (durationVal <= 0) {
+                            throw std::invalid_argument("Duration must be positive.");
+                        }
+                        time = durationInput;
+                        break;  // Valid input; break out of the loop.
+                    } catch (const std::exception& e) {
+                        std::cout << "Invalid duration format. Please enter a valid number (e.g., 1.5 for 1.5 hours).\n";
+                    }
+                }
 
                 service.CreateService(id, type, skills, cost, time);
                 break;
             }
+
             case 2: {
                 std::string inputID;
                 std::cout << "Enter the Service ID you want to view (e.g., s-1): ";
@@ -438,7 +470,7 @@ int main() {
                 break;
             }
             case 5:
-                std::cout << "Exiting the Service Management System.\n";
+                std::cout << "Exiting the Service Management System...\n";
                 return 0;  // Exit the program
             default:
                 std::cout << "Invalid choice, please try again.\n";
