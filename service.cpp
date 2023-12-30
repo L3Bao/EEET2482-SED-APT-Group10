@@ -374,39 +374,50 @@ int main() {
                     if (choice == 1) {
                         std::cout << "Enter new service type: ";
                         std::getline(std::cin, newValue);
-                        isValidInput = !newValue.empty();  // Validate that input is not empty
+                        if (newValue.empty()) {
+                            std::cout << "Service type cannot be empty. Please enter a valid service type.\n";
+                        } else {
+                            isValidInput = true;
+                        }
                     } else if (choice == 2) {
                         std::cout << "Enter required skills (separated by semicolons): ";
                         std::getline(std::cin, newValue);
-                        // Validate that input is not empty and correctly formatted
-                        isValidInput = !newValue.empty() && newValue.find_first_not_of(" ;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == std::string::npos;
+                        if (newValue.empty()) {
+                            std::cout << "Skills cannot be empty. Please enter at least one skill.\n";
+                        } else if (newValue.find_first_not_of(" ;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string::npos) {
+                            std::cout << "Invalid characters in skills. Please use only letters and separate skills with semicolons.\n";
+                        } else {
+                            isValidInput = true;
+                        }
                     } else if (choice == 3) {
                         std::cout << "Enter new credit cost: ";
                         std::getline(std::cin, newValue);
-                        // Validate that the cost is a number and is positive
                         try {
                             double cost = std::stod(newValue);
-                            isValidInput = cost > 0;
+                            if (cost <= 0) {
+                                std::cout << "Cost must be positive. Please enter a valid number (e.g., 50.5).\n";
+                            } else {
+                                isValidInput = true;
+                            }
                         } catch (const std::exception& e) {
-                            isValidInput = false;
+                            std::cout << "Invalid cost format. Please enter a valid number (e.g., 50.5).\n";
                         }
                     } else if (choice == 4) {
                         std::cout << "Enter new duration (in hours, e.g., 1.5 for one and a half hours): ";
                         std::getline(std::cin, newValue);
-                        // Validate that the duration is a number and is positive
                         try {
                             double duration = std::stod(newValue);
-                            isValidInput = duration > 0;
+                            if (duration <= 0) {
+                                std::cout << "Duration must be positive. Please enter a valid number (e.g., 1.5 for 1.5 hours).\n";
+                            } else {
+                                isValidInput = true;
+                            }
                         } catch (const std::exception& e) {
-                            isValidInput = false;
+                            std::cout << "Invalid duration format. Please enter a valid number (e.g., 1.5 for 1.5 hours).\n";
                         }
                     } else {
-                        std::cout << "Invalid choice.\n";
+                        std::cout << "Invalid choice. Please enter a number between 1 and 4.\n";
                         break;
-                    }
-
-                    if (!isValidInput) {
-                        std::cout << "Invalid input. Please try again.\n";
                     }
                 }
 
