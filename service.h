@@ -27,7 +27,7 @@ public:
     void CreateService(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time);
     void ViewService(const std::string& id);
     void UpdateService(const std::string& id, int choice, const std::string& newValue);
-    void DeleteService();
+    void DeleteService(const std::string& id);
 
     static std::string GenerateServiceId();
     friend void UpdateLine();

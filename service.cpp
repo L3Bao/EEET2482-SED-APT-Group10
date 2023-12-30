@@ -217,11 +217,7 @@ void Service::UpdateService(const std::string& id, int choice, const std::string
 }
 
 
-void Service::DeleteService() {
-    std::string inputID;
-    std::cout << "Enter the Service ID you want to delete (e.g., s-1): ";
-    std::cin >> inputID;
-
+void Service::DeleteService(const std::string& id) {
     std::string filename = "service.txt";
     std::ifstream file(filename);
     std::vector<std::string> lines;
@@ -234,7 +230,7 @@ void Service::DeleteService() {
             std::string currentID;
             getline(linestream, currentID, ',');
 
-            if (currentID != inputID) {
+            if (currentID != id) {
                 // If the current line's ID doesn't match the input ID, keep it
                 lines.push_back(line);
             } else {
@@ -256,12 +252,12 @@ void Service::DeleteService() {
                     }
                 }
                 outFile.close();
-                std::cout << "Service with ID " << inputID << " has been deleted successfully.\n";
+                std::cout << "Service with ID " << id << " has been deleted successfully.\n";
             } else {
                 std::cerr << "Unable to open file " << filename << " for writing.\n";
             }
         } else {
-            std::cout << "Service with ID " << inputID << " not found.\n";
+            std::cout << "Service with ID " << id << " not found.\n";
         }
     } else {
         std::cerr << "Unable to open file " << filename << "\n";
@@ -427,9 +423,20 @@ int main() {
                 break;
             }
   
-            case 4:
-                service.DeleteService();
+            case 4: {
+                std::string serviceID;
+                std::cout << "Enter the Service ID you want to delete (e.g., s-1): ";
+                std::cin >> serviceID;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                // Input validation
+                if (serviceID.empty() || serviceID.find("s-") == std::string::npos) {
+                    std::cout << "Invalid input. Please enter a valid Service ID (e.g., s-1).\n";
+                } else {
+                    service.DeleteService(serviceID);
+                }
                 break;
+            }
             case 5:
                 std::cout << "Exiting the Service Management System.\n";
                 return 0;  // Exit the program
