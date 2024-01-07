@@ -1,4 +1,3 @@
-Service ID,Service Type,Required Skills,Credit Cost,Duration
-s-1,Help People,Gardening;Tutor,50,3.5
-s-2,Meager Work,Gardening;Cleaning,40,2
-s-3,Culinary,Cooking;Chopping,35,3
+s-1,Gardening;Tutor,50,3.5
+s-2,Cleaning,40,2
+s-3,Cooking;Chopping,35,3

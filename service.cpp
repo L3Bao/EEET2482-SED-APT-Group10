@@ -59,9 +59,8 @@ bool Service::InitializeServiceCount() {
     return true;
 }
 
-Service::Service(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time, Member* member) {
+Service::Service(const std::string& id, const std::vector<std::string>& skills, double cost, const std::string& time, Member* member) {
     serviceID = id;
-    serviceType = type;
     requiredSkills = skills;
     creditCost = cost;
     duration = time;
@@ -74,9 +73,8 @@ std::string Service::GenerateServiceId() {
     return "s-" + std::to_string(++serviceCount);
 }
 
-void Service::CreateService(const std::string& id, const std::string& type, const std::vector<std::string>& skills, double cost, const std::string& time) {
+void Service::CreateService(const std::string& id, const std::vector<std::string>& skills, double cost, const std::string& time) {
     serviceID = id;
-    serviceType = type;
     requiredSkills = skills;
     creditCost = cost;
     duration = time;
@@ -92,11 +90,6 @@ void Service::CreateService(const std::string& id, const std::string& type, cons
     long file_length = file.tellp();  // Get the current position, which is the file's length
 
     if (file.is_open()) {
-        if (!fileExists || file_length == 0) {
-            // If the file was just created or is empty, write headers
-            file << "Service ID,Service Type,Required Skills,Credit Cost,Duration\n";
-        }
-
         if (file_length > 0) {
             // If the file is not empty, prepend a newline character to the new entry
             file << '\n';
@@ -104,7 +97,6 @@ void Service::CreateService(const std::string& id, const std::string& type, cons
 
         // Write details to the file in CSV format.
         file << serviceID << ',';
-        file << serviceType << ',';
         
         // Combine all skills into a single semicolon-separated string
         for (size_t i = 0; i < requiredSkills.size(); ++i) {
@@ -136,10 +128,9 @@ void Service::ViewService(const std::string& id) {
     } else {
         while (getline(file, line)) {
             std::stringstream linestream(line);
-            std::string currentID, currentType, currentSkills, currentCost, currentDuration;
+            std::string currentID, currentSkills, currentCost, currentDuration;
 
             getline(linestream, currentID, ',');
-            getline(linestream, currentType, ',');
             getline(linestream, currentSkills, ',');
             getline(linestream, currentCost, ',');
             getline(linestream, currentDuration);
@@ -152,7 +143,6 @@ void Service::ViewService(const std::string& id) {
 
             if (currentID == id) {
                 std::cout << "Service ID: " << currentID << '\n';
-                std::cout << "Service type: " << currentType << '\n';
                 std::cout << "Required skills: " << currentSkills << '\n';
                 std::cout << "Credit cost: " << currentCost << '\n';
                 std::cout << "Duration: " << currentDuration << "h" << '\n';
@@ -285,22 +275,11 @@ int main() {
         switch (choice) {
             case 1: {
                 std::string id = Service::GenerateServiceId();
-                std::string type, skill, time;
+                std::string skill, time;
                 double cost;
                 std::vector<std::string> skills;
 
                 std::cout << "Service ID generated: " << id << '\n';
-
-                // Input for Service Type
-                while (true) {
-                    std::cout << "Enter service type: ";
-                    std::getline(std::cin, type);
-                    if (type.empty()) {
-                        std::cout << "Service type cannot be empty. Please enter a valid service type.\n";
-                    } else {
-                        break;  // Valid input; break out of the loop.
-                    }
-                }
 
                 // Input for Skills
                 std::cout << "Enter required skills (type '-1' to finish, '-2' to remove the last skill): ";
@@ -361,7 +340,7 @@ int main() {
                     }
                 }
 
-                service.CreateService(id, type, skills, cost, time);
+                service.CreateService(id, skills, cost, time);
                 break;
             }
 
@@ -390,24 +369,15 @@ int main() {
                 bool isValidInput = false;  // Flag to track if the input is valid
 
                 std::cout << "What would you like to update?\n";
-                std::cout << "1. Service Type\n";
-                std::cout << "2. Required Skills\n";
-                std::cout << "3. Credit Cost\n";
-                std::cout << "4. Duration\n";
-                std::cout << "Enter your choice (1-4): ";
+                std::cout << "1. Required Skills\n";
+                std::cout << "2. Credit Cost\n";
+                std::cout << "3. Duration\n";
+                std::cout << "Enter your choice (1-3): ";
                 std::cin >> choice;
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                 while (!isValidInput) {
                     if (choice == 1) {
-                        std::cout << "Enter new service type: ";
-                        std::getline(std::cin, newValue);
-                        if (newValue.empty()) {
-                            std::cout << "Service type cannot be empty. Please enter a valid service type.\n";
-                        } else {
-                            isValidInput = true;
-                        }
-                    } else if (choice == 2) {
                         std::cout << "Enter required skills (separated by semicolons): ";
                         std::getline(std::cin, newValue);
                         if (newValue.empty()) {
@@ -417,7 +387,7 @@ int main() {
                         } else {
                             isValidInput = true;
                         }
-                    } else if (choice == 3) {
+                    } else if (choice == 2) {
                         std::cout << "Enter new credit cost: ";
                         std::getline(std::cin, newValue);
                         try {
@@ -430,7 +400,7 @@ int main() {
                         } catch (const std::exception& e) {
                             std::cout << "Invalid cost format. Please enter a valid number (e.g., 50.5).\n";
                         }
-                    } else if (choice == 4) {
+                    } else if (choice == 3) {
                         std::cout << "Enter new duration (in hours, e.g., 1.5 for one and a half hours): ";
                         std::getline(std::cin, newValue);
                         try {
