@@ -15,6 +15,15 @@ using namespace std;
 
 class Service;
 class Member: public User {
+    vector<string> skills;
+    vector<DateTime> availability;
+    float requiredHostRating;
+    vector<Member*> blockedMembers;
+    float averageHostRating;
+    float averageSupporterRating;
+    string city;
+    int creditPoints;
+
     public:
     //Constructors
         Member(string userId, string username, string password, string contact, string address);
@@ -56,15 +65,7 @@ class Member: public User {
         void calculateAverageHostRating(vector<Rating *> ratingList);
         void calculateAverageSupporterRating(vector<Rating *> ratingList);
         friend class Service;
-    private:
-    //Attributes
-        vector<string> skills;
-        vector<DateTime> availability;
-        float requiredHostRating;
-        vector<Member*> blockedMembers;
-        float averageHostRating;
-        float averageSupporterRating;
-        string city;
-        int creditPoints;
+
+ 
 };
 #endif

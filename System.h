@@ -7,6 +7,7 @@
 
 class Booking;
 class Member;
+class Admin;
 class Rating;
 
 class System {
@@ -18,7 +19,13 @@ private:
     std::vector<Member*> blockedList;
 
 public:
-    System(std::vector<User*> users = {}, std::vector<Service*> services = {}, std::vector<Booking*> bookings = {}, std::vector<Rating*> reviews = {}, std::vector<Member*> blockedMembers = {}) : userList(users), serviceList(services), bookingList(bookings), ratingList(reviews), blockedList(blockedMembers) {}
+    std::vector<User*> userList;
+    std::vector<Service*> serviceList;
+    std::vector<Booking*> bookingList;
+    std::vector<Rating*> ratingList;
+    std::vector<Member*> blockedList;
+    
+    System();
 
     ~System();
 

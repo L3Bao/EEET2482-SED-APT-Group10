@@ -9,14 +9,9 @@ class User;
 
 class Admin : public User {
 public:
-    Admin();
+    Admin(std::string username, std::string password);
 
-    bool login(std::string username, std::string pass) override;
-    void resetUserPassword(const std::string &userId, const std::string &newPassword);
-    bool isAdmin() const;
-
-    // Override the saveUser method to save to admins.txt.
-    void saveUser() override;
+    friend class System;
 };
 
 #endif // ADMIN_H   

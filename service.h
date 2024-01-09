@@ -5,6 +5,8 @@
 #include <vector>
 #include "Member.h"
 
+class Member;
+
 class Service {
 private:
     std::string serviceID;
