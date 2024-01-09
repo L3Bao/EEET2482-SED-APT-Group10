@@ -1,4 +1,4 @@
-#include "Member.h"
+/* #include "Member.h"
 #include <algorithm>  
 #include "Service.h"
 using namespace std;
@@ -266,3 +266,4 @@ void Member::calculateAverageSupporterRating(vector<Rating *> ratingList){
         cout << "Average supporter rating: " << averageSupporterRating << endl;
     }
 }
+ */

@@ -1,54 +1,29 @@
-#ifndef Rating_H
-#define Rating_H
+#ifndef RATING_H
+#define RATING_H
 
-#include "Member.h"
-#include <string>
+#include <iostream>
 
+class Member;
 
+struct RatingScores {
+    int skillRating;
+    int supporterRating;
+    int hostRating;
 
+    RatingScores(int skillRating = 0, int supporterRating = 0, int hostRating = 0) : skillRating(skillRating), supporterRating(supporterRating), hostRating(hostRating) {}
+};
 
 class Rating {
 private:
-    std::string ratingId;
-    Member* ratedMember;
-    float skillRating;
-    float supporterRating;
-    float hostRating;
-    std::string comments;
-    Booking* relatedBooking;
-
+    RatingScores scores;
+    std::string comment;
+    Member* reviewedByMember;
 public:
-    // Constructors
-     Rating(const std::string& id, Member* member, Booking* booking)
-        : ratingId(id), ratedMember(member), relatedBooking(booking),
-          skillRating(0.0f), supporterRating(0.0f), hostRating(0.0f) {}
+    Rating (const RatingScores& scores, std::string comment, Member* reviewedByMember);
 
-    
-    // Getters and Setters
-    std::string GetRatingId() const { return ratingId; }
-    void SetRatingId(const std::string& id) { ratingId = id; }
-
-   Member* GetRatedMember() const { return ratedMember; }
-    void SetRatedMember(Member* member) { ratedMember = member; }
-
-    float GetSkillRating() const { return skillRating; }
-    void SetSkillRating(float rating) { skillRating = rating; }
-
-    float GetSupporterRating() const { return supporterRating; }
-    void SetSupporterRating(float rating) { supporterRating = rating; }
-
-    float GetHostRating() const { return hostRating; }
-    void SetHostRating(float rating) { hostRating = rating; }
-
-    std::string GetComments() const { return comments; }
-    void SetComments(const std::string& comments) { this->comments = comments; }
-
-    Booking* GetRelatedBooking() const { return relatedBooking; }
-    void SetRelatedBooking(Booking* booking) { relatedBooking = booking; }
-
-    void InputRatingDetails();
-    void SaveRatingToFile(const std::string& filename);
-    void SubmitRating(float skillRating, float supporterRating, float hostRating, const std::string& comments, Member* memberSubmittingRating);
-
+    friend class System;
+    friend class Member;
+    friend class Skill;
 };
-#endif // Rating_H
+
+#endif
