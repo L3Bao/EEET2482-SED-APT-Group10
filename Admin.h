@@ -5,6 +5,8 @@
 #include "User.h"
 #include <string>
 
+class User;
+
 class Admin : public User {
 public:
     Admin();

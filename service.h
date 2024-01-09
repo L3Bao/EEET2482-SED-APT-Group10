@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-
-class Member;
+#include "Member.h"
 
 class Service {
 private:

@@ -5,26 +5,20 @@
 #include <iomanip>
 
 class DateTime {
-private:
-    int startHour, startMinute; // Start time
-    int endHour, endMinute;     // End time
+    int hour, minute;
 
 public:
     
-    DateTime(int sh = 0, int sm = 0, int eh = 0, int em = 0);
+    DateTime();
+    DateTime(int hour, int minute);
 
+    // Operator to compare time range
+    bool operator<(DateTime &other);
+
+    // Operator to find the difference between two time range
+    int operator-(DateTime &other);
     
-    void setStartTime(int hour, int minute);
-    void setEndTime(int hour, int minute);
-
-    
-    std::string getStartTime() const;
-    std::string getEndTime() const;
-
-    std::string formatTime(int hour, int minute) const;
-
-    
-    std::string getTimeRange() const;
+    std::string toString();
 };
 
 

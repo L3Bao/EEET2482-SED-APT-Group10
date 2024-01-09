@@ -18,7 +18,7 @@ class Member: public User {
     public:
     //Constructors
         Member(string userId, string username, string password, string contact, string address);
-        Member(string userId, string username, string password, string contact, string address , vector<string> skills, vector<DateTime> availability, float requiredHostRating, vector<Member*> blockedMembers, float averageHostRating, float averageSupporterRating, string city, int creditPoints);
+        Member(string userId, string username, string password, string contact, string address , vector<string> skills, vector<DateTime> availability, float requiredHostRating, vector<Member*> blockedMembers, float averageHostRating, float averageSupporterRating, string city, int creditPoints = 20);
         //Getters and Setters
         string getUserId();
         string getUsername();
