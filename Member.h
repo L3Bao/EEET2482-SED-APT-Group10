@@ -20,6 +20,10 @@ class Member: public User {
         Member(string userId, string username, string password, string contact, string address);
         Member(string userId, string username, string password, string contact, string address , vector<string> skills, vector<DateTime> availability, float requiredHostRating, vector<Member*> blockedMembers, float averageHostRating, float averageSupporterRating, string city, int creditPoints);
         //Getters and Setters
+        string getUserId();
+        string getUsername();
+        string getPassword();
+        string getContact();
         string getAddress();
         vector<string> getSkills();
         vector<DateTime> getAvailability();

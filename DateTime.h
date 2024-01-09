@@ -11,11 +11,10 @@ private:
 
 public:
     
-    DateTime(int sh, int sm, int eh, int em)
-        : startHour(sh), startMinute(sm), endHour(eh), endMinute(em) {}
+    DateTime(int sh = 0, int sm = 0, int eh = 0, int em = 0);
 
     
-     void setStartTime(int hour, int minute);
+    void setStartTime(int hour, int minute);
     void setEndTime(int hour, int minute);
 
     
