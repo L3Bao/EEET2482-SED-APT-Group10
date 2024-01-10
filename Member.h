@@ -8,8 +8,11 @@
 #include "DateTime.h"
 #include <iostream>
 #include "Service.h"
-#include "Booking.h"
 #include "Rating.h"
+
+class Skill;
+class Request;
+class SkillRent;
 
 
 class Member: public User {
@@ -50,6 +53,32 @@ class Member: public User {
 
     bool reviewHost(int reviewedHostID, int hostRating, std::string comment);
         
- 
+    bool setNewSkill(Skill *newSkill);
+
+    bool addToRequestList(Request *addedRequest);
+
+    bool removeFromRequestList(Request *removedRequest);
+
+    bool addHost(SkillRent *addedHost);
+
+    bool removeHost(SkillRent *removedHost);
+
+    bool showHost();
+
+    bool addReviewToMember(Rating *memberReview);
+
+    bool minusCreditPoints(int creditPoints);
+
+    bool addCreditPoints(int creditPoints);
+
+    bool blockMember(std::string blockedMemberID);
+
+    bool unblockMember(std::string blockedMemberID);
+
+    bool showBlockedMembers();
+
+    ~Member();
+
+    friend class System;
 };
 #endif

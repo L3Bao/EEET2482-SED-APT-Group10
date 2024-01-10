@@ -2,37 +2,30 @@
 #define SYSTEM_H
 
 #include <vector>
-#include <User.h>
-#include <service.h>
+#include <iostream>
+#include "User.h"
+#include "InputCheck.h"
 
-class Booking;
+class Skill;
 class Member;
 class Admin;
-class Rating;
+class DateTime;
+class InputCheck;
 
 class System {
-private:
-    std::vector<User*> userList;
-    std::vector<Service*> serviceList;
-    std::vector<Booking*> bookingList;
-    std::vector<Rating*> ratingList;
-    std::vector<Member*> blockedList;
 
 public:
-    std::vector<User*> userList;
-    std::vector<Service*> serviceList;
-    std::vector<Booking*> bookingList;
-    std::vector<Rating*> ratingList;
-    std::vector<Member*> blockedList;
-    
+    std::vector<Member*> memberList;
+    std::vector<Skill*> skillList;
+    std::vector<Skill*> memberAvailableSkillList;
+    std::vector<Admin*> adminList;
+    Member* currentMem;
+    InputCheck ic;
+
     System();
 
-    ~System();
+    
 
-    void HandleRegistration();
-    void TopUpCredits();
-    void SearchServices();
-    void FilterServices();
 };
 
 
