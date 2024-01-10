@@ -8,23 +8,12 @@
 
 class User {
 protected:
-    std::string userId, name, password, contact, address;
-    bool isLoggedIn;
+    std::string username;
+    std::string password;
 
 public:
-    User();
-    static std::string generateUserId();
-    std::vector<std::string> split(const std::string &s, char delimiter);
-    virtual bool login(std::string username, std::string pass);
-    virtual void saveUser();
-    void createNewUser(std::string name, std::string password, std::string contact, std::string address);
-    void updateUser(std::string newName = "", std::string newPassword = "", std::string newContact = "", std::string newAddress = "");
-    void deleteSpecificUser(const std::string &delUserId);
-    void deleteUser();
-    void updateAllUsers();
-    bool isUserLoggedIn();
-    void displayUserDetails();
-    void logout();
+    User(std::string username, std::string password);
+    friend class System;
 };
 
 #endif // USER_H

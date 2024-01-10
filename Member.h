@@ -1,66 +1,84 @@
-
 #ifndef MEMBER_H
 #define MEMBER_H
 #include <string>
 #include <vector>
+#include <set>
 #include <stdio.h>
 #include "User.h"
 #include "DateTime.h"
 #include <iostream>
 #include "Service.h"
-#include "Booking.h"
 #include "Rating.h"
-using namespace std;
+
+class Skill;
+class Request;
+class SkillRent;
 
 
-class Service;
 class Member: public User {
+    int memberID;
+    std::string name;
+    std::string phoneNumber;
+    std::string email;
+    std::string address;
+    std::set<std::string> blockedMembers;
+    std::string city;
+    int creditPoints;
+
+    Skill *ownedSkills;
+
+    std::vector<Rating*> memberRatingList;
+    std::vector<Request*> memberRequestList;
+
     public:
-    //Constructors
-        Member(string userId, string username, string password, string contact, string address);
-        Member(string userId, string username, string password, string contact, string address , vector<string> skills, vector<DateTime> availability, float requiredHostRating, vector<Member*> blockedMembers, float averageHostRating, float averageSupporterRating, string city, int creditPoints);
-        //Getters and Setters
-        string getAddress();
-        vector<string> getSkills();
-        vector<DateTime> getAvailability();
-        float getRequiredHostRating();
-        vector<Member*> getBlockedMembers();
-        float getAverageHostRating();
-        float getAverageSupporterRating();
-        string getCity();
-        int getCreditPoints();
-        void setAddress(string address);
-        void setSkills(vector<string> skills);
-        void setAvailability(vector<DateTime> availability);
-        void setRequiredHostRating(float requiredHostRating);
-        void setBlockedMembers(vector<Member*> blockedMembers);
-        void setAverageHostRating(float averageHostRating);
-        void setAverageSupporterRating(float averageSupporterRating);
-        void setCity(string city);
-        void setCreditPoints(int creditPoints);
-        void toString();
-        //Methods
-        void bookService();
-        void listAvailability(vector<Member*> memberList);
-        void blockMember(Member* member);
-        void unblockMember(Member* memberToUnblock);
-        void viewRequests(vector<Service*> serviceList);
-        void acceptRequest(Service* service);
-        void rejectRequest();
-        void updateSkills();
-        void updateAvailability();
-        void calculateAverageHostRating(vector<Rating *> ratingList);
-        void calculateAverageSupporterRating(vector<Rating *> ratingList);
-        friend class Service;
-    private:
-    //Attributes
-        vector<string> skills;
-        vector<DateTime> availability;
-        float requiredHostRating;
-        vector<Member*> blockedMembers;
-        float averageHostRating;
-        float averageSupporterRating;
-        string city;
-        int creditPoints;
+    Member(int memberID, std::string username, std::string password, std::string name, std::string phoneNumber, std::string email, std::string address, std::string city, int creditPoints = 20);
+
+    double getRatingScore();
+
+    bool showMemberProfile();
+
+    bool listSkill(DateTime *startTime, DateTime *endTime, int creditCostPerHour, double minHostRating);
+
+    bool unlistSkill();
+
+    bool showListOfRequest();
+
+    bool denyRequest(int requestID);
+
+    bool acceptRequest(int requestID);
+
+    bool finishSupport(int skillID);
+
+    bool reviewSkillAndSupporter(Skill *supportedSkill, int skillRating, int supporterRating, std::string comment);
+
+    bool reviewHost(int reviewedHostID, int hostRating, std::string comment);
+        
+    bool setNewSkill(Skill *newSkill);
+
+    bool addToRequestList(Request *addedRequest);
+
+    bool removeFromRequestList(Request *removedRequest);
+
+    bool addHost(SkillRent *addedHost);
+
+    bool removeHost(SkillRent *removedHost);
+
+    bool showHost();
+
+    bool addReviewToMember(Rating *memberReview);
+
+    bool minusCreditPoints(int creditPoints);
+
+    bool addCreditPoints(int creditPoints);
+
+    bool blockMember(std::string blockedMemberID);
+
+    bool unblockMember(std::string blockedMemberID);
+
+    bool showBlockedMembers();
+
+    ~Member();
+
+    friend class System;
 };
 #endif
